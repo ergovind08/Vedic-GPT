@@ -41,7 +41,7 @@ app.post("/generate-completion", async (req, res) => {
 
     const finalSentence = newSentence.replace(/GPT-3/g, "Vedic-GPT");
 
-    console.log(inalSentence);
+    console.log(finalSentence);
 
     res.json({ completion: finalSentence });
   } catch (error) {
