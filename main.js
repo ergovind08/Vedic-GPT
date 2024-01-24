@@ -21,6 +21,7 @@ const openai = new OpenAI({
 });
 
 app.use(express.json());
+app.get("/favicon.ico", (req, res) => res.status(204));
 
 app.post("/generate-completion", async (req, res) => {
   try {
@@ -31,7 +32,16 @@ app.post("/generate-completion", async (req, res) => {
       model: "gpt-3.5-turbo",
     });
 
-    res.json({ completion: completion.choices[0].message.content });
+    const newSentence = completion.choices[0].message.content.replace(
+      /OpenAI/g,
+      "Govind Jha"
+    );
+
+    const finalSentence = newSentence.replace(/GPT-3/g, "Vedic-GPT");
+
+    console.log(finalSentence);
+
+    res.json({ completion: finalSentence });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
