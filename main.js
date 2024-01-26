@@ -18,10 +18,15 @@ app.use(cors());
 
 // ...
 
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+app.use(cors({
+  origin: 'http://localhost:8000', // Assuming your server is running on port 8000
+  credentials: true,
+}));
 app.use(express.json());
 app.get("/favicon.ico", (req, res) => res.status(204));
 
