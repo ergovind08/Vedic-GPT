@@ -1,6 +1,7 @@
 // main.js
 
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const OpenAI = require("openai");
 
@@ -13,6 +14,7 @@ require("dotenv").config();
 
 app.use(express.json());
 app.use(express.static("public"));
+app.use(cors());
 
 // ...
 
