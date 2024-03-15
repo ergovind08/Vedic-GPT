@@ -8,47 +8,51 @@ const OpenAI = require("openai");
 // Load environment variables from .env file
 require("dotenv").config();
 
-// main.js
+// Set up CORS
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:8000",
+    credentials: true,
+  })
+);
 
-// ...
-
+// Parse JSON bodies
 app.use(express.json());
+
+// Serve static files from public directory
 app.use(express.static("public"));
-app.use(cors());
 
-// ...
-
-
+// Initialize OpenAI instance
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-app.use(cors({
-  origin: 'http://localhost:8000', // Assuming your server is running on port 8000
-  credentials: true,
-}));
-app.use(express.json());
+// Route to handle favicon request
 app.get("/favicon.ico", (req, res) => res.status(204));
 
+// Route to handle generating completions
 app.post("/generate-completion", async (req, res) => {
   try {
-    const userinput = req.body.userinput;
+    // Validate user input
+    const { userinput } = req.body;
+    if (!userinput || typeof userinput !== "string") {
+      return res.status(400).json({ error: "Invalid user input" });
+    }
 
+    // Generate completion using OpenAI
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: userinput }],
       model: "gpt-3.5-turbo",
     });
 
-    const newSentence = completion.choices[0].message.content.replace(
-      /OpenAI/g,
-      "Govind Jha"
-    );
+    // Replace OpenAI and GPT-3 with custom names
+    const newSentence = completion.choices[0].message.content
+      .replace(/OpenAI/g, "Govind Jha")
+      .replace(/GPT-3/g, "Vedic-GPT");
 
-    const finalSentence = newSentence.replace(/GPT-3/g, "Vedic-GPT");
+    console.log("Generated Sentence:", newSentence);
 
-    console.log(finalSentence);
-
-    res.json({ completion: finalSentence });
+    res.json({ completion: newSentence });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
